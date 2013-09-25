@@ -10,6 +10,50 @@
         (with ingredients
           (fields :name :ingredientsinrecipes.quantity)))
 
+(find-by :name [= "Oregano"] ingredients)
+(find-by :name [like "%Tomate%"] ingredients)
+
+(select recipes
+        (with ingredients
+          (fields :name :ingredientsinrecipes.quantity)
+          (where (and {:name [like "%Tomate%"]}
+          					  {:name [= "Spaghetti"]})))
+        (order :id :DESC))
+
+; select recipes containing a list of ingredients
+;; select rid, iid, iname
+;; from (select r.id as rid, i.id as iid, i.name as iname
+;;       from recipes r, ingredientsinrecipes iir, ingredients i
+;;       where r.id = iir.recipes_id and i.id = iir.ingredients_id)
+;; where 2 in (select ingredients_id
+;;             from ingredientsinrecipes
+;;             where recipes_id = rid);
+(def recipe-ingredients
+  (subselect ingredients
+             (fields :id)
+             (where {:ingredientsinrecipes.ingredients_id [= :id]})))
+
+(println (sql-only (select recipes
+        (fields :title)
+        (join ingredientsinrecipes (= :ingredientsinrecipes.recipes_id :id))
+        (where (and {1 [in recipe-ingredients]}
+                   {2 [in recipe-ingredients]})))))
+
+
+(map :iname (exec-raw ["select iname
+            from (select r.id as rid, i.id as iid, i.name as iname
+                  from recipes r, ingredientsinrecipes iir, ingredients i
+                  where r.id = iir.recipes_id and i.id = iir.ingredients_id),
+                 recipes rc
+            where rc.id = rid
+               and (2 in (select ingredients_id
+                          from ingredientsinrecipes
+                          where recipes_id = rid)
+                    and 1 in (select ingredients_id
+                             from ingredientsinrecipes
+                             where recipes_id = rid))"] :results))
+(repl/doc exec-raw)
+
 (remove-all-data)
 
 (last-inserted recipes)
@@ -35,7 +79,7 @@
                                :quantity "1 Pkg. (500g)"}]})
 (create-recipe {:title "Chili con Tofu",
                 :description "...",
-                :ingredients ["Paprika"
-                              "Zwiebeln"
-                              "Räuchertofu"
-                              "optional: Zuchini, Chili, Kidneybohnen"]})
+                :ingredients [{:name "Paprika", :quantity ""}
+                              {:name "Zwiebeln", :quantity ""}
+                              {:name "Räuchertofu", :quantity ""}
+                              {:name "optional: Zuchini, Chili, Kidneybohnen", :quantity ""}]})

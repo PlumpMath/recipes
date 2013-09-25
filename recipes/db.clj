@@ -27,7 +27,7 @@
       :id
       (or 0)))
 
-(def last-rowid
+(def ^{:private true} last-rowid
   (keyword "last_insert_rowid()"))
 
 (defn- ingredient-for-recipe
@@ -55,3 +55,10 @@
       (for [igrd req-ingredients]
         (ingredient-for-recipe igrd id)))
     id))
+
+(defmacro find-by ; has to be a macro so that condition is not evaluated
+  								; otherwise, one would have to quote it every time
+  "Find entries in `table` that have an `attr` matching `condition`."
+  [attr condition table]
+  (select table
+          (where {attr condition})))
