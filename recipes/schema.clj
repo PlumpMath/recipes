@@ -1,4 +1,5 @@
-(ns recipes.schema)
+(ns recipes.schema
+  (:require [datomic.api :as d]))
 
 (defn resolve [kw ns]
   (if (namespace kw)
@@ -29,3 +30,9 @@
    (def-entity ::ingredient-quanity :string :one)
 
    (def-entity ::uses :ref :many)])
+
+(defn prepare-schema [schema]
+  (map (fn [entity]
+         (into entity {:db/id #db/id[:db.part/db]
+                       :db.install/_attribute :db.part/db}))
+       schema))
