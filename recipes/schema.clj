@@ -9,17 +9,17 @@
 (defn def-entity [id type cardinality & opts]
   (let [type (resolve type :db.type)
         cardinality (resolve cardinality :db.cardinality)]
-    (into {:db.ident id
-           :db.valueType type
-           :db.cardinality cardinality}
+    (into {:db/ident id
+           :db/valueType type
+           :db/cardinality cardinality}
           (apply hash-map opts))))
 
 (def schema
   [(def-entity ::name :string :one
-     :db.unique :db.unique/value
-     :db.fulltext true)
+     :db/unique :db.unique/value
+     :db/fulltext true)
    (def-entity ::description :string :one
-     :db.fulltext true)
+     :db/fulltext true)
    (def-entity ::difficulty :keyword :one)
    (def-entity ::region :string :one)
    (def-entity ::category :string :one)
