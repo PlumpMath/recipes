@@ -33,6 +33,6 @@
 
 (defn prepare-schema [schema]
   (map (fn [entity]
-         (into entity {:db/id #db/id[:db.part/db]
+         (into entity {:db/id (d/tempid :db.part/db)
                        :db.install/_attribute :db.part/db}))
        schema))
