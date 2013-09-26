@@ -29,6 +29,13 @@
     (get entity field))
   entity)
 
+(defn find-by-many [m db]
+  (let [clauses (map (fn [[k v]]
+                       ['?id k v])
+                     m)]
+    (d/q `[:find ~'?id
+           :where ~@clauses] db)))
+
 (defn summarize [recipe]
   (with-fields [::r/name ::r/description] recipe))
 
