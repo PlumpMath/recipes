@@ -14,6 +14,15 @@
            :db/cardinality cardinality}
           (apply hash-map opts))))
 
+(defn def-enum [enum-name vals]
+  (let [ns (str (namespace enum-name) "." (name enum-name))]
+    (apply conj [(def-entity enum-name :ref :one
+                   :db/id (d/tempid :db.part/db))]
+           (map (fn [val]
+                  {:db/id (d/tempid :db.part/user)
+                   :db/ident (keyword ns (name val))})
+                vals))))
+
 (def schema
   [(def-entity ::name :string :one
      :db/unique :db.unique/value
