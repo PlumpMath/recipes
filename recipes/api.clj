@@ -24,8 +24,15 @@
 (defn find-first-by [attr val db]
   (d/entity db (ffirst (find-by attr val db))))
 
-(comment "This would just be for convenience or premature optimization."
-  (defn with-fields [fields entity]
-    (doseq [field fields]
-      (get entity field))
-    entity))
+(defn with-fields [fields entity]
+  (doseq [field fields]
+    (get entity field))
+  entity)
+
+(defn summarize [recipe]
+  (with-fields [::r/name ::r/description] recipe))
+
+(defn full [recipe]
+  (with-fields [::r/name ::r/description ::r/difficulty ::r/region
+                ::r/category ::r/saison ::r/uses]
+    recipe))
