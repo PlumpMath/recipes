@@ -34,9 +34,8 @@
              recipes (if (empty? query)
                        (q/find-all db)
                        (-> (q/find-by-many query db)
-                            (q/as-entities db)
-                            q/full))]
-         (-> (response (json/generate-string recipes {:key-fn name}))
+                            (q/as-entities db)))]
+         (-> (response (json/generate-string (map q/summarize recipes) {:key-fn name}))
              (content-type "application/json"))))
   (GET "/:name" [name]
        (let [recipe (q/find-first-by ::r/name name db)
