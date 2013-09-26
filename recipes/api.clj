@@ -13,9 +13,10 @@
     (d/db conn)))
 
 (defn find-all [db]
-  (map #(d/entity db (first %))
+  (as-entities
        (d/q '[:find ?id
-              :where [?id ::r/name _]] db)))
+              :where [?id ::r/name _]] db)
+       db))
 
 (defn find-by [attr val db]
   (d/q `[:find ?id
