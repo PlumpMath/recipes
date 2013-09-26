@@ -12,6 +12,9 @@
     (r/transact-test-data! conn)
     (d/db conn)))
 
+(defn as-entities [res db]
+  (map (comp #(d/entity db %) first) res))
+
 (defn find-all [db]
   (as-entities
        (d/q '[:find ?id
@@ -36,9 +39,6 @@
                      m)]
     (d/q `[:find ~'?id
            :where ~@clauses] db)))
-
-(defn as-entities [res db]
-  (map (comp #(d/entity db %) first) res))
 
 (defn summarize [recipe]
   (with-fields [::r/name ::r/description] recipe))
