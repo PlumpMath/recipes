@@ -18,7 +18,7 @@
 
 (defn params-to-schema [q]
   (into {} (map (fn [[k v]]
-                  [(keyword "recipes.schema" (name k)) v])
+                  [(r/resolve k :recipes.schema) v])
                 (select-keys q r/attributes))))
 
 (defroutes app-routes
