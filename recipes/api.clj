@@ -36,6 +36,9 @@
     (d/q `[:find ~'?id
            :where ~@clauses] db)))
 
+(defn as-entities [res db]
+  (map (comp #(d/entity db %) first) res))
+
 (defn summarize [recipe]
   (with-fields [::r/name ::r/description] recipe))
 
