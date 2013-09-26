@@ -2,12 +2,15 @@
   (:require [datomic.api :as d])
   (:require [recipes.schema :as r]))
 
-(defn in-mem-db []
+(defn in-mem-conn []
   (let [db-name "datomic:mem://recipes"]
     (d/create-database db-name)
-    (let [conn (d/connect "datomic:mem://recipes")]
-      (r/transact-test-data! conn)
-      (d/db conn))))
+    (d/connect db-name)))
+
+(defn in-mem-db []
+  (let [conn (in-mem-conn)]
+    (r/transact-test-data! conn)
+    (d/db conn)))
 
 (defn find-all [db]
   (map #(d/entity db (first %))
