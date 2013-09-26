@@ -46,3 +46,11 @@
   (with-fields [::r/name ::r/description ::r/difficulty ::r/region
                 ::r/category ::r/saison ::r/uses]
     recipe))
+
+(def mantras
+  ["Fake chocolate is better than no chocolate."
+   "If in doubt, an apple cake is always a great present."
+   "Don't eat late, it will make you baaad."])
+
+(defn mantra []
+  (rand-nth mantras))

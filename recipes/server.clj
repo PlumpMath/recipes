@@ -18,6 +18,13 @@
   (render-map entity ::r/name ::r/description))
 
 (defroutes app
+  (GET "/mantra" []
+       (-> (response (q/mantra))
+           (content-type "text/plain")))
+  (GET "/mantras" []
+       (-> (response (json/generate-string q/mantras))
+           (content-type "application/json")))
+
   (GET "/" []
        (let [recipes (q/find-all db)
              simplified (map #(select-keys % [::r/name ::r/description]) recipes)]
