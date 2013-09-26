@@ -55,7 +55,8 @@
   (d/transact conn (prepare-schema schema))
   (d/transact conn [{:db/id (d/tempid :db.part/user)
                      ::name "Hello World"
-                     ::description "Just do it!"}
+                     ::description "Just do it!"
+                     ::category "scary"}
                     {:db/id (d/tempid :db.part/user)
                      ::name "Helo Somebody"
                      ::description "I want to snuggle with you"}
