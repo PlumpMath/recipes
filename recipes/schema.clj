@@ -45,3 +45,15 @@
          (into entity {:db/id (d/tempid :db.part/db)
                        :db.install/_attribute :db.part/db}))
        schema))
+
+(defn transact-test-data! [conn]
+  (d/transact conn (prepare-schema schema))
+  (d/transact conn [{:db/id (d/tempid :db.part/user)
+                     ::name "Hello World"
+                     ::description "Just do it!"}
+                    {:db/id (d/tempid :db.part/user)
+                     ::name "Helo Somebody"
+                     ::description "I want to snuggle with you"}
+                    {:db/id (d/tempid :db.part/user)
+                     ::name "Apple pie"
+                     ::description "Key talent. Might be inedible"}]))
