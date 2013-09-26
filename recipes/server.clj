@@ -42,7 +42,8 @@
            (content-type "application/json")))
 
   (GET "/docs" []
-       (-> (response (json/generate-string (into (sorted-map) docs)))
+       (-> (response (json/generate-string (into (sorted-map) docs)
+                                           {:pretty true}))
            (content-type "application/json")))
 
   (GET "/" [& q]
