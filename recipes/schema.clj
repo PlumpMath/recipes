@@ -23,6 +23,11 @@
                    :db/ident (keyword ns (name val))})
                 vals))))
 
+(def attributes
+  [:name :description
+   :difficulty :region :category :season
+   :uses])
+
 (def schema
   [(def-entity ::name :string :one
      :db/unique :db.unique/value
