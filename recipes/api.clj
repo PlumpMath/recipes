@@ -28,11 +28,6 @@
 (defn find-first-by [attr val db]
   (d/entity db (ffirst (find-by attr val db))))
 
-(defn with-fields [fields entity]
-  (doseq [field fields]
-    (get entity field))
-  entity)
-
 (defn find-by-many [m db]
   (let [clauses (map (fn [[k v]]
                        ['?id k v])
@@ -41,11 +36,10 @@
            :where ~@clauses] db)))
 
 (defn summarize [recipe]
-  (with-fields [::r/name ::r/description] recipe))
+  (select-keys recipe [::r/name ::r/description]))
 
 (defn full [recipe]
-  (with-fields (map #(r/resolve % :recipes.schema) r/attributes)
-    recipe))
+  (select-keys recipe (map #(r/resolve % :recipes.schema) r/attributes)))
 
 (def mantras
   ["Fake chocolate is better than no chocolate."
