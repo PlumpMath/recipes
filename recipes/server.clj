@@ -2,9 +2,9 @@
   (:use compojure.core)
   (:require [compojure.route :as route])
   (:require [compojure.handler :as handler])
-  (:use ring.adapter.jetty)
-  (:use ring.util.response)
-  (:use [ring.middleware.params :only (wrap-params)])
+  (:use [ring.adapter.jetty]
+        [ring.util.response]
+        [ring.middleware.params :only (wrap-params)])
   (:require [cheshire.core :as json])
 
   (:require [recipes.schema :as r])
