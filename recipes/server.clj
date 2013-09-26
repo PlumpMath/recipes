@@ -21,12 +21,28 @@
                   [(r/resolve k :recipes.schema) v])
                 (select-keys q r/attributes))))
 
+(def docs
+  {"/mantra" "Wisdom"
+   "/mantras" "More wisdom"
+   "/docs" "Practical wisdom (e.g. this page)"
+   "/" "All recipes"
+   "/?key=val" {:doc "Searching for recipes"
+                :keys r/attributes
+                :returns "A collection of recipes that satisfy all criteria"}
+   "/:name" {:doc "Retrieve a recipe by name"
+             :comment "Same as `/?name=:name` but returns it directly"
+             :returns "One recipe, or an error if not found"}})
+
 (defroutes app-routes
   (GET "/mantra" []
        (-> (response (q/mantra))
            (content-type "text/plain")))
   (GET "/mantras" []
        (-> (response (json/generate-string q/mantras))
+           (content-type "application/json")))
+
+  (GET "/docs" []
+       (-> (response (json/generate-string (into (sorted-map) docs)))
            (content-type "application/json")))
 
   (GET "/" [& q]
