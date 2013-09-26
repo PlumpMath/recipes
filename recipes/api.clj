@@ -44,8 +44,7 @@
   (with-fields [::r/name ::r/description] recipe))
 
 (defn full [recipe]
-  (with-fields [::r/name ::r/description ::r/difficulty ::r/region
-                ::r/category ::r/saison ::r/uses]
+  (with-fields (map #(keyword "recipes.schema" (name %)) r/attributes)
     recipe))
 
 (def mantras
