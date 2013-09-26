@@ -16,9 +16,6 @@
   (json/generate-string (select-keys m (or ks (keys m)))
                         {:key-fn name}))
 
-(defn render-recipe [entity]
-  (render-map entity ::r/name ::r/description))
-
 (defn params-to-schema [q]
   (into {} (map (fn [[k v]]
                   [(keyword "recipes.schema" (name k)) v])
@@ -32,7 +29,7 @@
        (-> (response (json/generate-string q/mantras))
            (content-type "application/json")))
 
-  (GET "/" [& q :as params]
+  (GET "/" [& q]
        (let [query (params-to-schema q)
              recipes (if (empty? query)
                        (q/find-all db)
