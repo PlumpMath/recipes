@@ -28,9 +28,21 @@
 (defn find-first-by [attr val db]
   (d/entity db (ffirst (find-by attr val db))))
 
+(defn nested-coll? [obj]
+  (and (coll? obj) (coll? (first obj))))
+
+(defn flat-map [f coll]
+  (reduce (fn [cur el]
+            (let [el (f el)]
+              (if (nested-coll? el)
+                (concat cur el)
+                (concat cur (list el))))) '() coll))
+
 (defn find-by-many [m db]
-  (let [clauses (map (fn [[k v]]
-                       ['?id k v])
+  (let [clauses (flat-map (fn [[k v]]
+                       (if (vector? v)
+                         (map #(vector '?id k %) v)
+                         ['?id k v]))
                      m)]
     (d/q `[:find ~'?id
            :where ~@clauses] db)))

@@ -18,8 +18,8 @@
 
 (defn params-to-schema [q]
   (into {} (map (fn [[k v]]
-                  [(r/resolve k :recipes.schema) v])
-                (select-keys q r/attributes))))
+                  [(r/resolve (keyword k) :recipes.schema) v])
+                (select-keys q (map name r/attributes)))))
 
 (def docs
   {"/mantra" "Wisdom"
@@ -46,7 +46,7 @@
                                            {:pretty true}))
            (content-type "application/json")))
 
-  (GET "/" [& q]
+  (GET "/" {q :query-params}
        (let [query (params-to-schema q)
              recipes (if (empty? query)
                        (q/find-all db)
