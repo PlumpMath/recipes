@@ -26,7 +26,7 @@
 (def attributes
   [:name :description
    :difficulty :region :category :season
-   :uses])
+   :ingredients])
 
 (def schema
   [(def-entity ::name :string :one
@@ -39,17 +39,31 @@
    (def-entity ::category :string :one)
    (def-entity ::saison :string :one)
 
-   (def-entity ::ingredient :ref :one)
-   (def-entity ::ingredient-name :string :one)
-   (def-entity ::ingredient-quanity :string :one)
-
-   (def-entity ::uses :ref :many)])
+   (def-entity ::ingredients :ref :many)
+   (def-entity ::ingredient-name :string :one
+     :db/unique :db.unique/value)
+   (def-entity ::ingredient-quantity :string :one)])
 
 (defn prepare-schema [schema]
   (map (fn [entity]
          (into entity {:db/id (d/tempid :db.part/db)
                        :db.install/_attribute :db.part/db}))
        schema))
+
+(defn mk-ingredient [name quantity]
+  {:db/id (d/tempid :db.part/user)
+   ::ingredient-name name
+   ::ingredient-quantity quantity})
+
+(defn mk-recipe [recipe]
+  (let [ingredients (mapv (partial apply mk-ingredient)
+                         (or (::ingredients recipe) []))
+        ingredient-ids (map :db/id ingredients)
+        attributes (remove (fn [[k v]] (= k ::ingredients)) recipe)]
+    (conj ingredients
+          (into {:db/id (d/tempid :db.part/user)
+                 ::ingredients ingredient-ids}
+                attributes))))
 
 (defn transact-test-data! [conn]
   (d/transact conn (prepare-schema schema))
@@ -62,4 +76,11 @@
                      ::description "I want to snuggle with you"}
                     {:db/id (d/tempid :db.part/user)
                      ::name "Apple pie"
-                     ::description "Key talent. Might be inedible"}]))
+                     ::description "Key talent. Might be inedible"}])
+  (d/transact conn (mk-recipe {::name "real pie"
+                               ::description "try it, it's real!"
+                               ::category "experimental"
+                               ::ingredients [["clojure" "a bit"]
+                                              ["datomic" "more"]
+                                              ["duct tape" "lots"]
+                                              ["fun" "quite some"]]})))
